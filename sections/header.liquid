@@ -1,15 +1,26 @@
 {% assign main_menu_linklist = linklists[section.settings.menu].links %}
-<div class="relative bg-white" x-data="{ mobileMenuOpen: true }">
+  <div class="relative bg-white" x-data="{ mobileMenuOpen: false }">
   <div class="mx-auto px-4 sm:px-6">
     <div class="flex justify-between items-center py-6 md:justify-start md:space-x-10">
       <!-- STORE NAME / STORE LOGO -->
-      <div class="flex justify-start lg:flex-1 truncate">
-        <h1 class="text-xl font-bold truncate">{{ shop.name }}</h1>
+      <div class="flex justify-start lg:flex-1 items-center gap-3 truncate">
+        {% if section.settings.logo %}
+          <a href="{{ routes.root_url }}">
+            <img
+              src="{{ section.settings.logo | image_url: width: 160 }}"
+              alt="{{ shop.name }}"
+              class="h-10 w-auto"
+              width=""
+              height="">
+          </a>
+        {% else %}
+          <h1 class="text-xl font-bold truncate">{{ shop.name }}</h1>
+        {% endif %}
       </div>
 
       <div class="-mr-2 -my-2 ml-3 md:hidden">
         <button
-          x-on:click="mobileMenuOpen=true"
+          x-on:click="mobileMenuOpen = true"
           type="button"
           class="bg-white p-2 inline-flex items-center justify-center focus:outline-none cursor-pointer">
           {% render 'icon-menu' %}
@@ -36,7 +47,7 @@
                 <div class="shadow-lg border ring-black ring-opacity-5 overflow-hidden rounded-lg">
                   <div class="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
                     {% for childlink in link.links %}
-                      <a href="{{ childlink.url }}" class="-m-3 p-3 flex items start rounded-lg hover:bg-gray-100">
+                      <a href="{{ childlink.url }}" class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-100">
                         <div class="ml-4">
                           <p class="text-gray-900 text-base font-medium">
                             {{ childlink.title }}
@@ -50,7 +61,7 @@
             </div>
           {% else %}
             <div class="relative">
-              <a href="{{ link.url }}" class="text-base text-gray-500 hover:text-gray-900 {% if link.active == true %}text-red-900{% endif %}">
+              <a href="{{ link.url }}" class="text-base text-gray-500 hover:text-gray-900 {% if link.active %}text-red-900{% endif %}">
                 {{- link.title -}}
               </a>
             </div>
@@ -58,6 +69,7 @@
         {% endfor %}
       </nav>
 
+      <!-- ICONS / ACCOUNT -->
       <div class="hidden md:flex items-center justify-end md:flex-1 space-x-5">
         <a href="{{ routes.cart_url }}" class="whitespace-nowrap text-base text-gray-500 hover:text-gray-900">
           {% render 'icon-shopping-bag' %}
@@ -70,13 +82,14 @@
     </div>
   </div>
 
+  <!-- MOBILE MENU -->
   <div
     x-show="mobileMenuOpen"
     @click.away="mobileMenuOpen = false"
     class="absolute z-10 top-0 inset-x-0 p-2 transform origin-top-left md:hidden">
     <div class="shadow-lg rounded-lg ring-1 ring-black ring-opacity-5 bg-white w-full">
       <div class="p-5 divide-y-2 divide-gray-50">
-        <!-- MOBILE MENU HEADER TITLE PLUS CLOSE BUTTON -->
+        <!-- MOBILE MENU HEADER -->
         <div class="flex items-center justify-between pb-3">
           <div>
             <h1 class="text-lg text-gray-500">{{ section.settings.mobile_menu_title }}</h1>
@@ -91,7 +104,7 @@
           </div>
         </div>
 
-        <!-- NAVIGATION LINKS FOR MOBILE MENU -->
+        <!-- MOBILE NAV LINKS -->
         <div class="pt-3">
           <nav class="grid gap-y-7">
             {% for link in main_menu_linklist %}
@@ -107,14 +120,14 @@
                   </button>
                   <div x-show="{{ link_handle }}" class="grid gap-y-7 py-3">
                     {% for childlink in link.links %}
-                      <a href="#" class="-m-3 p-3 mt-2 flex items-center rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-50">
+                      <a href="{{ childlink.url }}" class="-m-3 p-3 mt-2 flex items-center rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-50">
                         <span class="ml-3 text-base font-medium text-gray-500">{{ childlink.title }}</span>
                       </a>
                     {% endfor %}
                   </div>
                 </div>
               {% else %}
-                <a href="#" class="-m-3 p-3 flex items-center rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-50">
+                <a href="{{ link.url }}" class="-m-3 p-3 flex items-center rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-50">
                   {{ link.title }}
                 </a>
               {% endif %}
@@ -141,6 +154,15 @@
         "id": "menu",
         "label": "Header Menu",
         "default": "main-menu"
+      }, {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo image"
+      }, {
+        "type": "text",
+        "id": "test_field",
+        "label": "Test field",
+        "default": "Hello"
       }
     ]
   }
